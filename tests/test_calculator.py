@@ -9,8 +9,8 @@ def test_search_pappers(monkeypatch, capsys):
                 return {"resultats": [{"nom": "Fake Company"}]}
         return FakeResponse()
     
-    # On remplace requests.get par fake_get
-    monkeypatch.setattr("requests", "get", fake_get)
+    # On patch l'import requests du module app
+    monkeypatch.setattr("calculator.calculator.requests", "get", fake_get)
 
     # On appelle la fonction
     app.search_pappers("fake")
@@ -21,7 +21,6 @@ def test_search_pappers(monkeypatch, capsys):
 
 def test_ascii_art_in_output(capsys, monkeypatch):
     """Vérifie que l'ASCII art est affiché au lancement."""
-    # On simule input('quit') pour quitter immédiatement
     monkeypatch.setattr("builtins.input", lambda _: "quit")
 
     app.main()

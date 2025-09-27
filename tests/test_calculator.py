@@ -1,49 +1,30 @@
-import requests
-import json
+import calculator.calculator as app
 
-API_TOKEN = "97a405f1664a83329a7d89ebf51dc227b90633c4ba4a2575"
-BASE_URL = "https://api.pappers.fr/v2/recherche"
+def test_search_pappers(monkeypatch, capsys):
+    """Teste la fonction search_pappers sans appeler l'API réelle."""
+    def fake_get(url, params=None, headers=None):
+        class FakeResponse:
+            status_code = 200
+            def json(self):
+                return {"resultats": [{"nom": "Fake Company"}]}
+        return FakeResponse()
+    
+    # On remplace requests.get par fake_get
+    monkeypatch.setattr("requests", "get", fake_get)
 
-ASCII_ART = r"""
- /$$$$$$$   /$$$$$$  /$$$$$$$  /$$$$$$$$ /$$$$$$$   /$$$$$$ 
-| $$__  $$ /$$__  $$| $$__  $$| $$_____/| $$__  $$ /$$__  $$
-| $$  \ $$| $$  \ $$| $$  \ $$| $$      | $$  \ $$| $$  \__/
-| $$$$$$$/| $$$$$$$$| $$$$$$$/| $$$$$   | $$$$$$$/|  $$$$$$ 
-| $$____/ | $$__  $$| $$____/ | $$__/   | $$__  $$ \____  $$
-| $$      | $$  | $$| $$      | $$      | $$  \ $$ /$$  \ $$
-| $$      | $$  | $$| $$      | $$$$$$$$| $$  | $$|  $$$$$$/
-|__/      |__/  |__/|__/      |________/|__/  |__/ \______/ 
-"""
+    # On appelle la fonction
+    app.search_pappers("fake")
 
-def test_search_pappers(query: str):
-    """Envoie une requête à l'API Pappers avec le paramètre q."""
-    params = {
-        "q": query,
-        "api_token": API_TOKEN,
-        "precision": "standard",
-        "bases": "entreprises,dirigeants,publications",
-        "page": 1,
-        "par_page": 5,  # on limite à 5 résultats pour pas flooder
-        "case_sensitive": "false"
-    }
-    headers = {
-        "User-Agent": "Mozilla/5.0",
-        "Accept": "application/json"
-    }
-    response = requests.get(BASE_URL, params=params, headers=headers)
+    # On capture la sortie standard
+    captured = capsys.readouterr()
+    assert "Fake Company" in captured.out
 
-    if response.status_code == 200:
-        data = response.json()
-        print(json.dumps(data, indent=2, ensure_ascii=False))
-    else:
-        print(f"Erreur {response.status_code}: {response.text}")
+def test_ascii_art_in_output(capsys, monkeypatch):
+    """Vérifie que l'ASCII art est affiché au lancement."""
+    # On simule input('quit') pour quitter immédiatement
+    monkeypatch.setattr("builtins.input", lambda _: "quit")
 
-if __name__ == "__main__":
-    print(ASCII_ART)
-    print("🔎 Bienvenue sur Papers CLI")
-    while True:
-        name = input("\nEntrez un nom à rechercher (ou 'quit' pour sortir) : ").strip()
-        if name.lower() in ["quit", "exit"]:
-            print("👋 Au revoir !")
-            break
-        test_search_pappers(name)
+    app.main()
+    captured = capsys.readouterr()
+    assert "/$$$$$$$" in captured.out
+    assert "Bienvenue sur Papers CLI" in captured.out

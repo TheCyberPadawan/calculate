@@ -23,7 +23,7 @@ def search_pappers(query: str):
         "precision": "standard",
         "bases": "entreprises,dirigeants,publications",
         "page": 1,
-        "par_page": 5,  # on limite à 5 résultats pour pas flooder
+        "par_page": 5,
         "case_sensitive": "false"
     }
     headers = {
@@ -38,7 +38,7 @@ def search_pappers(query: str):
     else:
         print(f"Erreur {response.status_code}: {response.text}")
 
-if __name__ == "__main__":
+def main():
     print(ASCII_ART)
     print("🔎 Bienvenue sur Papers CLI")
     while True:
@@ -47,3 +47,6 @@ if __name__ == "__main__":
             print("👋 Au revoir !")
             break
         search_pappers(name)
+
+if __name__ == "__main__":
+    main()

@@ -9,8 +9,8 @@ def test_search_pappers(monkeypatch, capsys):
                 return {"resultats": [{"nom": "Fake Company"}]}
         return FakeResponse()
     
-    # On patch l'import requests du module app
-    monkeypatch.setattr("calculator.calculator.requests", "get", fake_get)
+    # On patch l'objet requests importé dans le module app
+    monkeypatch.setattr(app.requests, "get", fake_get)
 
     # On appelle la fonction
     app.search_pappers("fake")

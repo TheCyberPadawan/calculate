@@ -15,7 +15,7 @@ ASCII_ART = r"""
 |__/      |__/  |__/|__/      |________/|__/  |__/ \______/ 
 """
 
-def search_pappers(query: str):
+def test_search_pappers(query: str):
     """Envoie une requête à l'API Pappers avec le paramètre q."""
     params = {
         "q": query,
@@ -46,4 +46,4 @@ if __name__ == "__main__":
         if name.lower() in ["quit", "exit"]:
             print("👋 Au revoir !")
             break
-        search_pappers(name)
+        test_search_pappers(name)
